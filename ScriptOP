@@ -59,7 +59,7 @@ MainTab:Toggle({
 })
 
 MainTab:Button({
-    Title="Teleport to Position",
+    Title="Teleport to End",
     Icon="location-arrow",
     Callback=function()
         if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
