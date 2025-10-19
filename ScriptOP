@@ -5,9 +5,10 @@ local Window = WindUI:CreateWindow({Title="IQ 0 Jump Rope Glass Bridge", Size=UD
 local MainTab = Window:Tab({Title="Main", Icon="house"})
 local ESPTab = Window:Tab({Title="ESP", Icon="eye"})
 local MiscTab = Window:Tab({Title="Misc", Icon="rbxassetid://4483345998"})
-
+-- Services
+local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
-local LocalPlayer = game.Players.LocalPlayer
+local LocalPlayer = Players.LocalPlayer
 local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
 
@@ -186,13 +187,15 @@ ESPTab:Toggle({
         ESPEnabled=state
         if ESPEnabled then
             for _,plr in pairs(Players:GetPlayers()) do
-                if plr~=LocalPlayer then
-                    createESP(plr.Character,ESPColor)
+                if plr ~= LocalPlayer and plr.Character then
+                    createESP(plr.Character, ESPColor)
                 end
             end
         else
             for _,plr in pairs(Players:GetPlayers()) do
-                removeESP(plr.Character)
+                if plr.Character then
+                    removeESP(plr.Character)
+                end
             end
         end
     end
@@ -205,10 +208,8 @@ ESPTab:Colorpicker({
         ESPColor=c
         if ESPEnabled then
             for _,plr in pairs(Players:GetPlayers()) do
-                local h=plr.Character and plr.Character:FindFirstChild("99ESP")
-                if h then
-                    h.FillColor=ESPColor
-                end
+                local h = plr.Character and plr.Character:FindFirstChild("99ESP")
+                if h then h.FillColor = ESPColor end
             end
         end
     end
@@ -217,19 +218,19 @@ ESPTab:Colorpicker({
 function createESP(character,color)
     if not character or not character:FindFirstChild("HumanoidRootPart") then return end
     if character:FindFirstChild("99ESP") then return end
-    local h=Instance.new("Highlight")
-    h.Name="99ESP"
-    h.Adornee=character
-    h.FillColor=color
-    h.FillTransparency=0.5
-    h.OutlineColor=Color3.new(0,0,0)
-    h.OutlineTransparency=0
-    h.Parent=character
+    local h = Instance.new("Highlight")
+    h.Name = "99ESP"
+    h.Adornee = character
+    h.FillColor = color
+    h.FillTransparency = 0.5
+    h.OutlineColor = Color3.new(0,0,0)
+    h.OutlineTransparency = 0
+    h.Parent = character
 end
 
 function removeESP(character)
     if not character then return end
-    local h=character:FindFirstChild("99ESP")
+    local h = character:FindFirstChild("99ESP")
     if h then h:Destroy() end
 end
 
@@ -240,8 +241,9 @@ Players.PlayerAdded:Connect(function(p)
 end)
 
 Players.PlayerRemoving:Connect(function(p)
-    removeESP(p.Character)
+    if p.Character then removeESP(p.Character) end
 end)
+
 
 RunService.RenderStepped:Connect(function()
     if SpeedEnabled and LocalPlayer.Character then
